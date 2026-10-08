@@ -705,14 +705,14 @@ pub const RocEnv = struct {
 
 /// Tag discriminant for Try.
 pub const HostStderr_lineResultTag = enum(u8) {
-    Err = 0,
-    Ok = 1,
+    @"Err" = 0,
+    @"Ok" = 1,
 };
 
 /// Payload union for Try.
 pub const HostStderr_lineResultPayload = extern union {
-    err: RocStr,
-    ok: [0]u8,
+        @"err": RocStr,
+        @"ok": [0]u8,
 };
 
 /// Tag union: Try
@@ -736,7 +736,7 @@ pub const HostStderr_lineResult = if (@sizeOf(usize) == 4) extern struct {
     payload: HostStderr_lineResultPayload,
     tag: HostStderr_lineResultTag,
     pub fn payload_err(self: *const @This()) RocStr {
-        return self.payload.err;
+        return self.payload.@"err";
     }
     /// Recursively decrement Roc-owned payloads.
     pub fn decref(self: @This(), roc_host: *RocHost) void {
@@ -764,14 +764,14 @@ comptime {
 
 /// Tag discriminant for Try.
 pub const HostStdin_lineResultTag = enum(u8) {
-    Err = 0,
-    Ok = 1,
+    @"Err" = 0,
+    @"Ok" = 1,
 };
 
 /// Payload union for Try.
 pub const HostStdin_lineResultPayload = extern union {
-    err: RocStr,
-    ok: RocStr,
+        @"err": RocStr,
+        @"ok": RocStr,
 };
 
 /// Tag union: Try
@@ -799,10 +799,10 @@ pub const HostStdin_lineResult = if (@sizeOf(usize) == 4) extern struct {
     payload: HostStdin_lineResultPayload,
     tag: HostStdin_lineResultTag,
     pub fn payload_err(self: *const @This()) RocStr {
-        return self.payload.err;
+        return self.payload.@"err";
     }
     pub fn payload_ok(self: *const @This()) RocStr {
-        return self.payload.ok;
+        return self.payload.@"ok";
     }
     /// Recursively decrement Roc-owned payloads.
     pub fn decref(self: @This(), roc_host: *RocHost) void {
@@ -830,14 +830,14 @@ comptime {
 
 /// Tag discriminant for Try.
 pub const HostStdout_lineResultTag = enum(u8) {
-    Err = 0,
-    Ok = 1,
+    @"Err" = 0,
+    @"Ok" = 1,
 };
 
 /// Payload union for Try.
 pub const HostStdout_lineResultPayload = extern union {
-    err: RocStr,
-    ok: [0]u8,
+        @"err": RocStr,
+        @"ok": [0]u8,
 };
 
 /// Tag union: Try
@@ -861,7 +861,7 @@ pub const HostStdout_lineResult = if (@sizeOf(usize) == 4) extern struct {
     payload: HostStdout_lineResultPayload,
     tag: HostStdout_lineResultTag,
     pub fn payload_err(self: *const @This()) RocStr {
-        return self.payload.err;
+        return self.payload.@"err";
     }
     /// Recursively decrement Roc-owned payloads.
     pub fn decref(self: @This(), roc_host: *RocHost) void {
@@ -905,19 +905,19 @@ pub const HostStdout_lineArgs = extern struct {
 
 fn decrefHostStderr_lineResult(value: HostStderr_lineResult, roc_host: *RocHost) void {
     switch (value.tag) {
-        .Err => {
-            value.payload_err().decref(roc_host);
+        .@"Err" => {
+        value.payload_err().decref(roc_host);
         },
-        .Ok => {},
+        .@"Ok" => {},
     }
 }
 
 fn increfHostStderr_lineResult(value: HostStderr_lineResult, amount: isize) void {
     switch (value.tag) {
-        .Err => {
-            value.payload_err().incref(amount);
+        .@"Err" => {
+        value.payload_err().incref(amount);
         },
-        .Ok => {},
+        .@"Ok" => {},
     }
 }
 
@@ -929,22 +929,22 @@ pub const HostStderr_lineResultRelease = struct {
 
 fn decrefHostStdin_lineResult(value: HostStdin_lineResult, roc_host: *RocHost) void {
     switch (value.tag) {
-        .Err => {
-            value.payload_err().decref(roc_host);
+        .@"Err" => {
+        value.payload_err().decref(roc_host);
         },
-        .Ok => {
-            value.payload_ok().decref(roc_host);
+        .@"Ok" => {
+        value.payload_ok().decref(roc_host);
         },
     }
 }
 
 fn increfHostStdin_lineResult(value: HostStdin_lineResult, amount: isize) void {
     switch (value.tag) {
-        .Err => {
-            value.payload_err().incref(amount);
+        .@"Err" => {
+        value.payload_err().incref(amount);
         },
-        .Ok => {
-            value.payload_ok().incref(amount);
+        .@"Ok" => {
+        value.payload_ok().incref(amount);
         },
     }
 }
@@ -957,19 +957,19 @@ pub const HostStdin_lineResultRelease = struct {
 
 fn decrefHostStdout_lineResult(value: HostStdout_lineResult, roc_host: *RocHost) void {
     switch (value.tag) {
-        .Err => {
-            value.payload_err().decref(roc_host);
+        .@"Err" => {
+        value.payload_err().decref(roc_host);
         },
-        .Ok => {},
+        .@"Ok" => {},
     }
 }
 
 fn increfHostStdout_lineResult(value: HostStdout_lineResult, amount: isize) void {
     switch (value.tag) {
-        .Err => {
-            value.payload_err().incref(amount);
+        .@"Err" => {
+        value.payload_err().incref(amount);
         },
-        .Ok => {},
+        .@"Ok" => {},
     }
 }
 
@@ -987,6 +987,7 @@ pub fn decrefListOfStr(value: RocList(RocStr), roc_host: *RocHost) void {
     value.deinitWith(RocStrRelease, roc_host);
 }
 
+
 fn rocReleasePolicy(comptime T: type) type {
     if (T == RocStr) return RocStrRelease;
     if (T == HostStderr_lineResult) return HostStderr_lineResultRelease;
@@ -995,6 +996,7 @@ fn rocReleasePolicy(comptime T: type) type {
     if (T == RocList(RocStr)) return RocListRelease(RocList(RocStr), RocStrRelease);
     @compileError("generated glue has no recursive release policy for " ++ @typeName(T));
 }
+
 
 // Runtime Symbols
 //
@@ -1038,6 +1040,7 @@ pub extern fn roc_stdin_line() callconv(.c) HostStdin_lineResult;
 ///     arg0.decref(roc_host);
 /// The result is owned by Roc: return exactly one owned reference.
 pub extern fn roc_stdout_line(arg0: RocStr) callconv(.c) HostStdout_lineResult;
+
 
 /// Default memory management functions for Roc platforms.
 ///
@@ -1180,3 +1183,4 @@ pub fn makeRocHost(env: *RocEnv) RocHost {
 
 /// Entrypoint: main_for_host!
 pub extern fn roc_main(arg0: RocList(RocStr)) callconv(.c) i32;
+

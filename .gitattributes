@@ -1,0 +1,2 @@
+# Preserve byte-for-byte upstream glue output, including its final blank line.
+host-shim/roc_platform_abi.zig whitespace=-blank-at-eof

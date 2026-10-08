@@ -1,13 +1,10 @@
+// Zig's source-package inventory. The downloadable Roc platform has a separate,
+// smaller runtime inventory maintained by scripts/src/Bundle.roc.
 .{
-    .name = .embed_roc_example,
+    .name = .embed_roc_in_dotnet,
     .version = "0.1.0",
     .minimum_zig_version = "0.16.0",
     .dependencies = .{},
-    .fingerprint = 0x800649476b1c6d5f,
-    .paths = .{
-        "build.zig",
-        "build.zig.zon",
-        "platform",
-        "src",
-    },
+    .fingerprint = 0x46f84c75fb6d6ff8,
+    .paths = .{ "build.zig", "build.zig.zon", "platform", "host-shim", "scripts" },
 }

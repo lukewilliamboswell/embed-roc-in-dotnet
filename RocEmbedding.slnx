@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/dotnet-host/">
+    <Project Path="dotnet-host/RocHost.csproj" />
+  </Folder>
+  <Folder Name="/dotnet-plugin/">
+    <Project Path="dotnet-plugin/Roc.Hosting.csproj" />
+  </Folder>
+  <Folder Name="/dotnet-tests/">
+    <Project Path="dotnet-tests/Roc.Hosting.SmokeTests.csproj" />
+  </Folder>
+</Solution>

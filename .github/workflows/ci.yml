@@ -1,0 +1,58 @@
+name: Package and consume Roc platform
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Cross-compile both adapters once and publish one content-addressed platform.
+  package:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: roc-lang/setup-roc@f5a74bf90aa694b43ab4a7cbfdb19273bc6aa697
+        with:
+          version: nightly-new-compiler
+          nightly-tag: nightly-2026-10-04-130536d
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      # Regenerate glue in isolation, require equality with the checked-in file,
+      # then compile both adapters from that fresh output before packaging.
+      - run: roc scripts/check_all.roc -- --package-only bundle
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roc-dotnet-platform
+          path: 'bundle/*.tar.zst'
+          if-no-files-found: error
+
+  # Each OS acts as a consumer of that same artifact. These jobs install no Zig
+  # and never rebuild the adapter, so missing or nonportable link inputs surface.
+  smoke:
+    needs: package
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: roc-lang/setup-roc@f5a74bf90aa694b43ab4a7cbfdb19273bc6aa697
+        with:
+          version: nightly-new-compiler
+          nightly-tag: nightly-2026-10-04-130536d
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/download-artifact@v4
+        with:
+          name: roc-dotnet-platform
+          path: bundle
+      - name: Consume bundled platform
+        shell: pwsh
+        run: |
+          $archive = (Get-ChildItem bundle -Filter *.tar.zst | Select-Object -First 1).FullName
+          roc scripts/smoke.roc -- $archive
