@@ -28,8 +28,13 @@ pub fn build(b: *std.Build) void {
                 .pic = true,
             }),
         });
+        const is_windows = std.mem.eql(u8, entry[0], "x64win");
+        // A public COFF symbol alone is not a DLL export. Emit the /EXPORT
+        // directive into the archive so the consumer's Windows linker exposes
+        // roc_run_app to NativeLibrary.GetExport when it builds the app DLL.
+        lib.dll_export_fns = is_windows;
         // Keep Windows compiler support routines in the distributed link input.
-        lib.bundle_compiler_rt = std.mem.eql(u8, entry[0], "x64win");
+        lib.bundle_compiler_rt = is_windows;
         // The normal archive contains its object bytes, even when member names
         // contain build-cache paths. Copy it directly into the platform inventory.
         const copy = b.addUpdateSourceFiles();
